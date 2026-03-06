@@ -197,9 +197,10 @@ export default function App() {
   );
 
   const handleDownloadDoc = useCallback(() => {
+    // Khi tải DOC chỉ lấy nội dung từng trang, không kèm header "Trang 1", "Trang 2", ...
     const md =
-      stream?.finalMarkdown ??
       stream?.pages.map((p) => p.content).join("\n\n") ??
+      stream?.finalMarkdown ??
       "";
     if (!md) return;
     (async () => {

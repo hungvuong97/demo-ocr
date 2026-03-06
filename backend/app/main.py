@@ -99,6 +99,7 @@ async def export_as(body: ExportBody):
     if body.format == "html":
         return PlainTextResponse(to_html(md), media_type="text/html")
     if body.format == "doc":
+        # Xuất DOCX thuần văn bản từ Markdown (giữ nguyên nội dung, không thêm "Trang 1/2/...")
         blob = to_docx(md)
         return Response(
             content=blob,

@@ -32,6 +32,19 @@ def image_to_base64_data_url(image: Image.Image, fmt: str = "PNG") -> str:
     return f"data:{mime};base64,{b64}"
 
 
+def _normalize_ocr_output(text: str) -> str:
+    """
+    Làm sạch kết quả OCR.
+    - Nếu model trả về câu kiểu 'There is no text or content in the provided image. It appears to be blank'
+      thì coi như trang trắng -> trả về chuỗi rỗng.
+    """
+    t = (text or "").strip()
+    lowered = t.lower()
+    if lowered.startswith("there is no text or content in the provided image"):
+        return ""
+    return t
+
+
 async def ocr_image(image: Image.Image, prompt: str = DEFAULT_PROMPT) -> str:
     image = _resize_to_fit(image)
     data_url = image_to_base64_data_url(image)
@@ -64,7 +77,8 @@ async def ocr_image(image: Image.Image, prompt: str = DEFAULT_PROMPT) -> str:
         resp.raise_for_status()
         data = resp.json()
     choice = data.get("choices", [{}])[0]
-    return (choice.get("message") or {}).get("content", "").strip()
+    raw = (choice.get("message") or {}).get("content", "") or ""
+    return _normalize_ocr_output(raw)
 
 
 async def ocr_bytes(image_bytes: bytes, prompt: str = DEFAULT_PROMPT) -> str:

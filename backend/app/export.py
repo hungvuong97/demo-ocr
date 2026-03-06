@@ -2,8 +2,8 @@ import io
 from typing import Literal
 
 from docx import Document
-from docx.shared import Pt
 from markdown import markdown
+from htmldocx import HtmlToDocx
 
 Format = Literal["html", "markdown", "doc"]
 
@@ -17,14 +17,17 @@ def to_html(md: str) -> str:
 
 
 def to_docx(md: str) -> bytes:
-    doc = Document()
-    for line in md.split("\n"):
-        line = line.strip()
-        if not line:
-            continue
-        p = doc.add_paragraph()
-        p.add_run(line).font.size = Pt(11)
+    """
+    Chuyển Markdown (có thể chứa cả HTML như bảng) -> HTML -> DOCX.
+    Nhờ htmldocx để giữ được heading, in đậm, bảng, danh sách... gần giống bản gốc nhất.
+    """
+    html = to_html(md)
+
+    document = Document()
+    parser = HtmlToDocx()
+    parser.add_html_to_document(html, document)
+
     buf = io.BytesIO()
-    doc.save(buf)
+    document.save(buf)
     buf.seek(0)
     return buf.read()
