@@ -45,6 +45,22 @@ body {
   margin-bottom: 2rem;
 }
 
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+  margin-bottom: 0.75rem;
+  transition: color 0.15s;
+}
+
+.back-link:hover {
+  color: var(--primary-hover);
+}
+
 .header-inner {
   display: flex;
   flex-direction: column;
